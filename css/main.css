@@ -177,9 +177,13 @@ body {
 body {
   background: var(--body-bg-color);
   color: var(--text-color);
-  font-family: 'Lato', "PingFang SC", "Microsoft YaHei", sans-serif;
-  font-size: 1em;
+  font-family: 'Monda', "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: 14px;
   line-height: 2;
+  background: url("/images/bg.jpg");
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: 50% 50%;
 }
 @media (max-width: 991px) {
   body {
@@ -193,7 +197,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'Lato', "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-family: 'Loboster Two', 'Monda', "PingFang SC", "Microsoft YaHei", sans-serif;
   font-weight: bold;
   line-height: 1.5;
   margin: 20px 0 15px;
@@ -392,7 +396,7 @@ pre {
 }
 pre,
 code {
-  font-family: consolas, Menlo, monospace, "PingFang SC", "Microsoft YaHei";
+  font-family: 'PT Mono', consolas, Menlo, monospace, "PingFang SC", "Microsoft YaHei";
 }
 code {
   background: #eee;
@@ -986,7 +990,7 @@ pre .javascript .function {
   color: var(--brand-hover-color);
 }
 .site-title {
-  font-family: 'Lato', "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-family: 'Roboto Slab', 'Monda', "PingFang SC", "Microsoft YaHei", sans-serif;
   font-size: 1.375em;
   font-weight: normal;
   margin: 0;
@@ -1169,7 +1173,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #74e54d;
+  background: #25ffff;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -1340,34 +1344,6 @@ pre .javascript .function {
 .post-toc .nav .active-current > a:hover {
   color: #fc6423;
 }
-.site-state {
-  display: flex;
-  justify-content: center;
-  line-height: 1.4;
-  margin-top: 10px;
-  overflow: hidden;
-  text-align: center;
-  white-space: nowrap;
-}
-.site-state-item {
-  padding: 0 15px;
-}
-.site-state-item:not(:first-child) {
-  border-left: 1px solid #eee;
-}
-.site-state-item a {
-  border-bottom: none;
-}
-.site-state-item-count {
-  display: block;
-  font-size: 1em;
-  font-weight: 600;
-  text-align: center;
-}
-.site-state-item-name {
-  color: #999;
-  font-size: 0.8125em;
-}
 .footer {
   color: #999;
   font-size: 0.875em;
@@ -1510,7 +1486,7 @@ pre .javascript .function {
   }
 }
 .post-body {
-  font-family: 'Lato', "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-family: 'Noto Serif SC', 'Monda', "PingFang SC", "Microsoft YaHei", sans-serif;
   overflow-wrap: break-word;
   word-wrap: break-word;
 }
@@ -1808,7 +1784,7 @@ pre .javascript .function {
 }
 .posts-expand .post-meta {
   color: #999;
-  font-family: 'Lato', "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-family: 'Noto Serif SC', 'Monda', "PingFang SC", "Microsoft YaHei", sans-serif;
   font-size: 0.75em;
   margin: 3px 0 60px 0;
   text-align: center;
@@ -2158,18 +2134,18 @@ ul.breadcrumb li + li:last-child {
   }
 }
 .header-inner {
-  background: rgba(255,255,255,0.7);
+  background: rgba(255,255,255,0.8);
   border-radius: initial;
   box-shadow: initial;
   overflow: hidden;
   padding: 0;
   position: absolute;
   top: 0;
-  width: 240px;
+  width: 220px;
 }
 @media (min-width: 1200px) {
   .header-inner {
-    width: 240px;
+    width: 220px;
   }
 }
 @media (max-width: 991px) {
@@ -2191,12 +2167,12 @@ ul.breadcrumb li + li:last-child {
   }
 }
 .content-wrap {
-  background: rgba(255,255,255,0.7);
+  background: rgba(255,255,255,0.8);
   border-radius: initial;
   box-shadow: initial;
   box-sizing: border-box;
   padding: 40px;
-  width: calc(100% - 252px);
+  width: calc(100% - 232px);
 }
 @media (max-width: 991px) {
   .content-wrap {
@@ -2334,11 +2310,11 @@ ul.breadcrumb li + li:last-child {
   border-bottom-color: #fc6423;
 }
 .sidebar {
-  background: var(--body-bg-color);
+  background: rgba(255,255,255,0.8);
   box-shadow: none;
   margin-top: 100%;
   position: static;
-  width: 240px;
+  width: 220px;
 }
 @media (max-width: 991px) {
   .sidebar {
@@ -2349,12 +2325,12 @@ ul.breadcrumb li + li:last-child {
   display: none;
 }
 .sidebar-inner {
-  background: rgba(255,255,255,0.7);
+  background: rgba(255,255,255,0.8);
   border-radius: initial;
   box-shadow: initial;
   box-sizing: border-box;
   color: var(--text-color);
-  width: 240px;
+  width: 220px;
   opacity: 0;
 }
 .sidebar-inner.affix {
