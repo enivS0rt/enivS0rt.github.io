@@ -180,7 +180,7 @@ body {
   font-family: 'Monda', "PingFang SC", "Microsoft YaHei", sans-serif;
   font-size: 14px;
   line-height: 2;
-  background: url("/images/bg.jpg");
+  background: url("https://i.loli.net/2020/04/25/C8Hxe9sZrYEhpq1.png");
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-position: 50% 50%;
@@ -1173,7 +1173,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #25ffff;
+  background: #54ff17;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
