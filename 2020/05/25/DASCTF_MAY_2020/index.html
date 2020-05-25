@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://i.loli.net/2020/04/25/3jOZRPIxi5gLFfX.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://i.loli.net/2020/04/25/3jOZRPIxi5gLFfX.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://i.loli.net/2020/04/25/3jOZRPIxi5gLFfX.jpg">
+  <link rel="mask-icon" href="https://i.loli.net/2020/04/25/3jOZRPIxi5gLFfX.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Loboster Two:300,300italic,400,400italic,700,700italic|Noto Serif SC:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":220,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="前言上周打了一下安恒五月赛，题目质量还行，记录一些东西。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DASCTF_MAY_2020">
+<meta property="og:url" content="http://yoursite.com/2020/05/25/DASCTF_MAY_2020/index.html">
+<meta property="og:site_name" content="enivS0rt&#39;s Blog">
+<meta property="og:description" content="前言上周打了一下安恒五月赛，题目质量还行，记录一些东西。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-05-25T07:24:02.856Z">
+<meta property="article:modified_time" content="2020-05-25T09:41:12.441Z">
+<meta property="article:author" content="enivS0rt">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2020/05/25/DASCTF_MAY_2020/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>DASCTF_MAY_2020 | enivS0rt's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">enivS0rt's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/25/DASCTF_MAY_2020/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://i.loli.net/2020/04/25/3jOZRPIxi5gLFfX.jpg">
+      <meta itemprop="name" content="enivS0rt">
+      <meta itemprop="description" content="the things I do for love">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="enivS0rt's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          DASCTF_MAY_2020
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2020-05-25 15:24:02 / Modified: 17:41:12" itemprop="dateCreated datePublished" datetime="2020-05-25T15:24:02+08:00">2020-05-25</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>上周打了一下安恒五月赛，题目质量还行，记录一些东西。</p>
+<a id="more"></a>
+
+<h4 id="帮帮小红花"><a href="#帮帮小红花" class="headerlink" title="帮帮小红花"></a>帮帮小红花</h4><p>这题应该是非预期做的 给了个裸的shell 无回显 反弹shell失败 直接</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cat &#x2F;flag &gt; .&#x2F;res</span><br><span class="line">GET &#x2F;res</span><br></pre></td></tr></table></figure>
+
+<p>flag内容 make iptables great again 应该就是不让弹shell的 看了下别的师傅wp是shell命令进行延时盲注 贴一下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">h3zh1=$( cat /flag | cut -c %d-%d );if [ $( printf '%%d' "'$h3zh1" ) -gt %d ];then sleep %f;fi</span><br></pre></td></tr></table></figure>
+
+<p>挺有趣</p>
+<h4 id="gob"><a href="#gob" class="headerlink" title="gob"></a>gob</h4><p>上传时将文件目录穿越为/flag cookie记录了文件位置 查看头像就能拿flag</p>
+<h4 id="老开发"><a href="#老开发" class="headerlink" title="老开发"></a>老开发</h4><p>题目描述说用了orm 进去是个登陆框 后端是php 裸的sql注入 测了一下</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">username=admin&amp;password=admin 登陆成功</span><br><span class="line">username=admin'&amp;password=admin 500</span><br><span class="line">username=admin' and 1=1 -- &amp;password=admin 登陆成功</span><br><span class="line">username=admin' and 1=2 -- &amp;password=admin 登陆失败</span><br><span class="line">username=admin' and length(database())&gt;0 -- &amp;password=admin 500</span><br></pre></td></tr></table></figure>
+
+<p>测试可以看到有些语法比如database()函数 select语句一旦使用就会500 /robots.txt里给了个User.php 访问可以看到是定义了一个orm实体 根据语法搜了一波应该是DQL</p>
+<p>于是这题变成了一个裸的DQL注入的问题 具体可以看这篇文章  <a href="https://blog.deteact.com/dql-injection/" target="_blank" rel="noopener">DQL注入</a></p>
+<p>然后再去翻翻文档 <a href="https://www.doctrine-project.org/projects/doctrine-orm/en/2.6/reference/dql-doctrine-query-language.html" target="_blank" rel="noopener">DQL语法</a></p>
+<p>最后payload忘了留 大概写一下 可能有错(x</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">username&#x3D;admin&#39; and 1&#x3D;(select s from user s where s.uid&#x3D;12 and substring(s.password,1,1)&#x3D;&#39;a&#39;) -- &amp;password&#x3D;admin 布尔盲注</span><br></pre></td></tr></table></figure>
+
+<p>user表uid=12时username为flag password即为flag内容</p>
+<h4 id="多人运动"><a href="#多人运动" class="headerlink" title="多人运动"></a>多人运动</h4><p>第一步是一个order by的sql注入点 带一个巨厚的waf 最后选择的是异或符号+pow函数进行布尔盲注 字符串截取用left+right 带一个子查询 字符比较用hex函数 运算符由于+不能用 选择 - * / 结合 做的很麻烦 payload大概是这样</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">by=^(select pow(2,hex(hex(right(left((select fuck2 from (select 1 as fuck1, 2 as fuck2 union select * from user)x limit 1,1),i),1)-num))</span><br><span class="line">然后按位爆破num 结果的每一位为unhex(unhex(num+1024))</span><br></pre></td></tr></table></figure>
+
+<p>虽然其实爆破的速度还可以 但是payload确实巨麻烦 所以这里贴一个出题人的payload</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">by=(case when right(left(( select group_concat(`1`,`2`) from (select 1,2 union select * from hint)a ),(位数)),1) in (binary(16进制数) then pow(123,123123213)  else 1 end)</span><br></pre></td></tr></table></figure>
+
+<p>还有一点是当时只想着注入得到admin的密码 没想到还有个hint表… 感觉挺坑的 hint表里留了个/source接口可以看到部分源码 最后管理员账密为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">admin T1Me cTRol13r</span><br></pre></td></tr></table></figure>
+
+<p>第二步是一个golang的ssrf点 可以输入url和cookie 对url的host做了过滤 反正试了一下只有baidu.com和bing.com看到了回显 需要本地访问/getflag接口拿flag 由于第一步没有得到/source接口 所以这里测试了很久也没想到怎么绕过 host绕不过去就想着给了输入cookie的点是不是crlf 又测试了半天 最后放弃了 吐槽一下这里有个巨长的验证码 巨恶心 感觉没啥必要</p>
+<p>最后姿势其实很简单就是host留空 如果知道这个姿势其实不用/source看源码也能做出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;&#x2F;getflag</span><br></pre></td></tr></table></figure>
+
+<h4 id="ezupload"><a href="#ezupload" class="headerlink" title="ezupload"></a>ezupload</h4><p>这题最开始没用扫描器扫 像个脑瘫一样黑盒测了半天 测到getkey.php 会获取referer并get_heaers 后来扫到<code>www.zip</code> 感觉自己像个智障</p>
+<p>限制大概是</p>
+<ul>
+<li>parse_url 解析的host为 google.com 获者 *.google.com</li>
+<li>get_headers 获取到一个特定的头</li>
+</ul>
+<p>大概就是解析的host符合要求但是get_headers访问自己的vps 测了很久 最后的payload</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;vps_ip:port,.google.com:port&#x2F; 前后port一致</span><br></pre></td></tr></table></figure>
+
+<p>看了下别的师傅的payload 用的是%00</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;vps_ip%00.google.com&#x2F;</span><br></pre></td></tr></table></figure>
+
+<p>进去有个文件上传功能 还有个文件查看功能 有一堆函数可以触发phar反序列化 所以大概攻击链是上传phar文件 然后触发phar反序列化 用compress.zlib绕过正则 由于给的类没什么利用链 又扫到了个flag.php告诉你可以实例化任意类并且只能本地访问</p>
+<p>最后攻击链为 soapClient ssrf 访问 flag.php -&gt; 实例化SimpleXMLElemt类 无回显xxe 读取/flag</p>
+<h4 id="布吉岛"><a href="#布吉岛" class="headerlink" title="布吉岛"></a>布吉岛</h4><p>java web 比赛时候没怎么看 后面等复现环境出来了会专门写一篇文章</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/04/24/blog-restart/" rel="prev" title="blog-restart">
+      <i class="fa fa-chevron-left"></i> blog-restart
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#帮帮小红花"><span class="nav-number">2.</span> <span class="nav-text">帮帮小红花</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gob"><span class="nav-number">3.</span> <span class="nav-text">gob</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#老开发"><span class="nav-number">4.</span> <span class="nav-text">老开发</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#多人运动"><span class="nav-number">5.</span> <span class="nav-text">多人运动</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ezupload"><span class="nav-number">6.</span> <span class="nav-text">ezupload</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#布吉岛"><span class="nav-number">7.</span> <span class="nav-text">布吉岛</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="enivS0rt"
+      src="https://i.loli.net/2020/04/25/3jOZRPIxi5gLFfX.jpg">
+  <p class="site-author-name" itemprop="name">enivS0rt</p>
+  <div class="site-description" itemprop="description">the things I do for love</div>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">enivS0rt</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
